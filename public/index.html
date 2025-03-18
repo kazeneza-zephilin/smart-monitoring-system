@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Monitoring System Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #e0f2e9; color: #1b5e20; margin: 0; padding: 0; }
+        .navbar { background-color: #2e7d32; padding: 15px; text-align: center; font-size: 1.8em; font-weight: bold; color: #ffffff; }
+        .container { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+        .card { background: #c8e6c9; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); width: 250px; margin: 10px; text-align: center; }
+        .measurement { width: 40%; text-align: center; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        h2 { color: #1b5e20; } 
+        p { font-size: 1.2em; margin: 10px 0; color: #2e7d32; }
+        .data { color: #388e3c; font-weight: bold; font-size: 2.5em; display: block; }
+        input, button { padding: 10px; margin: 10px; border: 1px solid #2e7d32; border-radius: 5px; }
+        button { background-color: #2e7d32; color: white; cursor: pointer; }
+        .fa-icon { margin-right: 8px; color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <div class="navbar"><i class="fa-solid fa-leaf fa-icon"></i>Smart Monitoring System Dashboard</div>
+    <div class="container">
+        <div class="measurement">
+            <h2><i class="fa-solid fa-ruler fa-icon"></i>Measurements</h2>
+            <p><i class="fa-solid fa-compass fa-icon"></i>Current Angle:<span id="angle" class="data">0°</span></p>
+            <p><i class="fa-solid fa-arrows-up-down fa-icon"></i>Distance: <span id="distance" class="data">0 cm</span></p>
+            <p><i class="fa-solid fa-seedling fa-icon"></i>Crop Height: <span id="height" class="data">0 cm</span></p>
+        </div>
+        <div class="measurement">
+            <h2><i class="fa-solid fa-cloud-sun fa-icon"></i>Environmental Conditions</h2>
+            <p><i class="fa-solid fa-temperature-high fa-icon"></i>Temperature:<span id="temperature" class="data">0°C</span></p>
+            <p><i class="fa-solid fa-droplet fa-icon"></i>Soil Moisture: <span id="moisture" class="data">0%</span></p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="card"><h2><i class="fa-solid fa-wheat-awn fa-icon"></i>Crop Details</h2>
+            <p><i class="fa-solid fa-seedling fa-icon"></i>Crop Type: <span>Maize</span></p>
+            <p><i class="fa-solid fa-clock fa-icon"></i>Time in Farm: <span>3 Months</span></p>
+        </div>
+        <div class="card"><h2><i class="fa-solid fa-chart-line fa-icon"></i>Crop Yield Information</h2>
+            <p><i class="fa-solid fa-ruler-combined fa-icon"></i>Area Cultivated: <span>2 Hectares</span></p>
+            <p><i class="fa-solid fa-seedling fa-icon"></i>Seeds Used: <span>50 kg</span></p>
+            <p><i class="fa-solid fa-weight-hanging fa-icon"></i>Expected Yield: <span>8 Tons</span></p>
+        </div>
+        <div class="card"><h2><i class="fa-solid fa-lightbulb fa-icon"></i>Recommendations</h2>
+            <div id="recommendations">
+                <p><i class="fa-solid fa-check-circle fa-icon"></i>Loading recommendations...</p>
+            </div>
+        </div>
+        <div class="card"><h2><i class="fa-solid fa-pen-to-square fa-icon"></i>Input Crop Information</h2>
+            <p><i class="fa-solid fa-seedling fa-icon"></i><input type="text" placeholder="Enter Crop Type"></p>
+            <p><i class="fa-solid fa-calendar fa-icon"></i><input type="date"></p>
+            <button><i class="fa-solid fa-upload fa-icon"></i>Submit</button>
+        </div>
+    </div>
+
+    <script>
+        function updateData() {
+            fetch('/api/data')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('angle').textContent = data.angle + '°';
+                    document.getElementById('distance').textContent = data.distance + ' cm';
+                    document.getElementById('height').textContent = data.height + ' cm';
+                    document.getElementById('temperature').textContent = data.temperature + '°C';
+                    document.getElementById('moisture').textContent = data.moisture + '%';
+
+                    // Update recommendations dynamically
+                    const recDiv = document.getElementById('recommendations');
+                    if (data.height < 50) {
+                        recDiv.innerHTML = `
+                            <p style="color: #2e7d32;"><i class="fa-solid fa-droplet fa-icon"></i>Moisture: good status.<br>
+                            <i class="fa-solid fa-temperature-high fa-icon"></i>Temperature: good status.<br>
+                            <i class="fa-solid fa-seedling fa-icon"></i>Crop height: bad status.</p>
+                            <p style="color: red;"><i class="fa-solid fa-triangle-exclamation fa-icon"></i>Your crop height is not in good condition.</p>
+                            <p style="color: red;"><i class="fa-solid fa-bug fa-icon"></i>Please check for pests, rodents, or diseases.</p>
+                        `;
+                    } else {
+                        recDiv.innerHTML = `<p><i class="fa-solid fa-check-circle fa-icon"></i>Your crops are in good condition!<br>Keep updated</p>`;
+                    }
+                })
+                .catch(error => console.log('Error:', error));
+        }
+
+        setInterval(updateData, 1000);
+        updateData();
+    </script>
+</body>
+</html>
