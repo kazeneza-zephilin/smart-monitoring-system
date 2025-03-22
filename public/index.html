@@ -3,60 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Monitoring System Dashboard</title>
+    <title>Smart Crop Monitoring System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        body { font-family: Arial, sans-serif; background-color: #e0f2e9; color: #1b5e20; margin: 0; padding: 0; }
-        .navbar { background-color: #2e7d32; padding: 15px; text-align: center; font-size: 1.8em; font-weight: bold; color: #ffffff; }
-        .container { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+        body { font-family: Arial, sans-serif; background-color: #e0f2e9; color: #1b5e20; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; }
+        .navbar { background-color: #2e7d32; padding: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .logo { font-size: 1.8em; font-weight: bold; color: #ffffff; display: flex; align-items: center; text-transform: uppercase; letter-spacing: 2px; }
+        .logo .smart { color: #a5d6a7; }
+        .logo .crop { color: #ffffff; }
+        .logo .monitoring { color: #a5d6a7; }
+        .logo .system { color: #ffffff; }
+        .logo i { margin: 0 5px; color: #a5d6a7; font-size: 1.2em; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { color: #ffffff; text-decoration: none; font-size: 1em; padding: 10px 20px; transition: background-color 0.3s; display: block; }
+        .nav-links a:hover { background-color: #1b5e20; border-radius: 5px; }
+        .hamburger { display: none; font-size: 1.5em; color: #ffffff; cursor: pointer; }
+        .container { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 20px; padding: 0 10px; }
         .card { background: #c8e6c9; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); width: 250px; margin: 10px; text-align: center; }
         .measurement { width: 40%; text-align: center; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        h2 { color: #1b5e20; } 
+        h2 { color: #1b5e20; }
         p { font-size: 1.2em; margin: 10px 0; color: #2e7d32; }
         .data { color: #388e3c; font-weight: bold; font-size: 2.5em; display: block; }
-        input, button { padding: 10px; margin: 10px; border: 1px solid #2e7d32; border-radius: 5px; }
+        input, button, select { padding: 10px; margin: 10px; border: 1px solid #2e7d32; border-radius: 5px; width: 100%; box-sizing: border-box; }
         button { background-color: #2e7d32; color: white; cursor: pointer; }
         .fa-icon { margin-right: 8px; color: #2e7d32; }
+        #loginRegisterContent { display: block; }
+        #monitoringDashboard, #agronomistDashboard, #agronomistsContent { display: none; }
+        .auth-card, .agronomist-card { width: 300px; margin: 20px auto; }
+        .agronomist-card img { width: 100%; border-radius: 10px; max-height: 200px; object-fit: cover; }
+        .error, .success { font-size: 0.9em; }
+        .success { color: #388e3c; }
+
+        /* Advanced Agronomist Dashboard */
+        .agro-dashboard { width: 90%; max-width: 1000px; margin: 20px auto; background: linear-gradient(135deg, #c8e6c9, #a5d6a7); padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); }
+        .agro-header { display: flex; align-items: center; gap: 20px; border-bottom: 2px solid #2e7d32; padding-bottom: 15px; }
+        .agro-header img { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid #2e7d32; }
+        .agro-info { flex-grow: 1; }
+        .agro-info h1 { font-size: 2em; margin: 0; color: #1b5e20; }
+        .agro-info p { font-size: 1.2em; margin: 5px 0; }
+        .agro-details { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .agro-details div { background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1); }
+        .agro-details h3 { margin: 0 0 10px; color: #2e7d32; }
+
+        /* Spacer for Login/Register */
+        #loginRegisterContent .spacer { height: 100vh; } /* Pushes footer below viewport */
+
+        /* Advanced Footer */
+        footer { 
+            background: linear-gradient(135deg, #333333, #1a1a1a); 
+            color: #ffffff; 
+            padding: 30px 20px; 
+            text-align: center; 
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5); 
+        }
+        .footer-content { max-width: 1000px; margin: 0 auto; }
+        footer h3 { font-size: 1.5em; margin-bottom: 15px; color: #cccccc; }
+        .footer-contact p { margin: 5px 0; font-size: 1.1em; }
+        .footer-social { margin-top: 20px; }
+        .footer-social a { color: #ffffff; font-size: 1.8em; margin: 0 15px; transition: color 0.3s, transform 0.3s; }
+        .footer-social a:hover { color: #bbbbbb; transform: scale(1.2); }
+        footer a { color: #bbbbbb; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 768px) {
+            .navbar { flex-direction: row; justify-content: space-between; padding: 10px; }
+            .logo { font-size: 1.5em; }
+            .hamburger { display: block; }
+            .nav-links { display: none; flex-direction: column; position: absolute; top: 60px; right: 0; background-color: #2e7d32; width: 200px; text-align: center; border-radius: 0 0 0 5px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); }
+            .nav-links.active { display: flex; }
+            .measurement { width: 100%; }
+            .card { width: 100%; max-width: 300px; }
+            .auth-card, .agronomist-card { width: 90%; }
+            .agro-header { flex-direction: column; text-align: center; }
+            .agro-details { grid-template-columns: 1fr; }
+            .footer-social a { font-size: 1.5em; margin: 0 10px; }
+            #loginRegisterContent .spacer { height: 80vh; } /* Adjusted for smaller screens */
+        }
+        @media (max-width: 480px) {
+            .logo { font-size: 1.2em; }
+            .nav-links { width: 150px; }
+            .data { font-size: 2em; }
+            h2 { font-size: 1.5em; }
+            p { font-size: 1em; }
+            .agro-header img { width: 100px; height: 100px; }
+            footer h3 { font-size: 1.2em; }
+            .footer-contact p { font-size: 1em; }
+            .footer-social a { font-size: 1.2em; }
+            #loginRegisterContent .spacer { height: 60vh; } /* Adjusted for very small screens */
+        }
     </style>
 </head>
 <body>
-    <div class="navbar"><i class="fa-solid fa-leaf fa-icon"></i>Smart Monitoring System Dashboard</div>
-    <div class="container">
-        <div class="measurement">
-            <h2><i class="fa-solid fa-ruler fa-icon"></i>Measurements</h2>
-            <p><i class="fa-solid fa-compass fa-icon"></i>Current Angle:<span id="angle" class="data">0°</span></p>
-            <p><i class="fa-solid fa-arrows-up-down fa-icon"></i>Distance: <span id="distance" class="data">0 cm</span></p>
-            <p><i class="fa-solid fa-seedling fa-icon"></i>Crop Height: <span id="height" class="data">0 cm</span></p>
+    <div class="navbar">
+        <div class="logo">
+            <span class="smart">Smart</span>
+            <i class="fa-solid fa-leaf"></i>
+            <span class="crop">Crop</span>
+            <i class="fa-solid fa-seedling"></i>
+            <span class="monitoring">Monitoring</span>
+            <i class="fa-solid fa-tools"></i>
+            <span class="system">System</span>
         </div>
-        <div class="measurement">
-            <h2><i class="fa-solid fa-cloud-sun fa-icon"></i>Environmental Conditions</h2>
-            <p><i class="fa-solid fa-temperature-high fa-icon"></i>Temperature:<span id="temperature" class="data">0°C</span></p>
-            <p><i class="fa-solid fa-droplet fa-icon"></i>Soil Moisture: <span id="moisture" class="data">0%</span></p>
+        <div class="hamburger" onclick="toggleMenu()">
+            <i class="fa-solid fa-bars"></i>
         </div>
-    </div>
-    <div class="container">
-        <div class="card"><h2><i class="fa-solid fa-wheat-awn fa-icon"></i>Crop Details</h2>
-            <p><i class="fa-solid fa-seedling fa-icon"></i>Crop Type: <span>Maize</span></p>
-            <p><i class="fa-solid fa-clock fa-icon"></i>Time in Farm: <span>3 Months</span></p>
-        </div>
-        <div class="card"><h2><i class="fa-solid fa-chart-line fa-icon"></i>Crop Yield Information</h2>
-            <p><i class="fa-solid fa-ruler-combined fa-icon"></i>Area Cultivated: <span>2 Hectares</span></p>
-            <p><i class="fa-solid fa-seedling fa-icon"></i>Seeds Used: <span>50 kg</span></p>
-            <p><i class="fa-solid fa-weight-hanging fa-icon"></i>Expected Yield: <span>8 Tons</span></p>
-        </div>
-        <div class="card"><h2><i class="fa-solid fa-lightbulb fa-icon"></i>Recommendations</h2>
-            <div id="recommendations">
-                <p><i class="fa-solid fa-check-circle fa-icon"></i>Loading recommendations...</p>
-            </div>
-        </div>
-        <div class="card"><h2><i class="fa-solid fa-pen-to-square fa-icon"></i>Input Crop Information</h2>
-            <p><i class="fa-solid fa-seedling fa-icon"></i><input type="text" placeholder="Enter Crop Type"></p>
-            <p><i class="fa-solid fa-calendar fa-icon"></i><input type="date"></p>
-            <button><i class="fa-solid fa-upload fa-icon"></i>Submit</button>
+        <div class="nav-links">
+            <a href="#" onclick="showDashboard()" id="dashboardLink">Dashboard</a>
+            <a href="#" onclick="showAgronomists()" id="agronomistsLink" style="display: none;">Agronomists</a>
+            <a href="#" onclick="logout()">Logout</a>
         </div>
     </div>
 
+    <!-- Login/Register Content -->
+    <div id="loginRegisterContent">
+        <div class="container">
+            <div class="auth-card" id="loginForm">
+                <h2><i class="fa-solid fa-sign-in-alt fa-icon"></i>Login</h2>
+                <input type="text" id="loginUsername" placeholder="Username">
+                <input type="password" id="loginPassword" placeholder="Password">
+                <button onclick="login()"><i class="fa-solid fa-sign-in-alt fa-icon"></i>Login</button>
+                <p>Not registered? <a href="#" onclick="showRegister()">Register here</a></p>
+                <p class="error" id="loginError"></p>
+            </div>
+            <div class="auth-card" id="registerForm" style="display: none;">
+                <h2><i class="fa-solid fa-user-plus fa-icon"></i>Register</h2>
+                <input type="text" id="regUsername" placeholder="Username">
+                <input type="password" id="regPassword" placeholder="Password">
+                <select id="regRole">
+                    <option value="monitoring">Monitoring Account</option>
+                    <option value="agronomist">Agronomist Account</option>
+                </select>
+                <button onclick="register()"><i class="fa-solid fa-user-plus fa-icon"></i>Register</button>
+                <p>Already registered? <a href="#" onclick="showLogin()">Login here</a></p>
+                <p class="error" id="regError"></p>
+            </div>
+        </div>
+        <div class="spacer"></div> <!-- Spacer to push footer down -->
+        <footer>
+            <div class="footer-content">
+                <h3>Developed by Muhire Jacques</h3>
+                <div class="footer-contact">
+                    <p>Email: <a href="mailto:muhirejacques71@gmail.com">muhirejacques71@gmail.com</a></p>
+                    <p>Tel: <a href="tel:+250787084167">+250 787 084 167</a></p>
+                </div>
+                <div class="footer-social">
+                    <a href="https://instagram.com/muhirejacques" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://facebook.com/muhirejacques" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://x.com/muhirejacques" target="_blank" title="X"><i class="fab fa-x-twitter"></i></a>
+                    <a href="https://linkedin.com/in/muhirejacques" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Monitoring Dashboard -->
+    <div id="monitoringDashboard">
+        <div class="container">
+            <div class="measurement">
+                <h2><i class="fa-solid fa-ruler fa-icon"></i>Measurements</h2>
+                <p><i class="fa-solid fa-compass fa-icon"></i>Current Angle:<span id="angle" class="data">0°</span></p>
+                <p><i class="fa-solid fa-arrows-up-down fa-icon"></i>Distance: <span id="distance" class="data">0 cm</span></p>
+                <p><i class="fa-solid fa-seedling fa-icon"></i>Crop Height: <span id="height" class="data">0 cm</span></p>
+            </div>
+            <div class="measurement">
+                <h2><i class="fa-solid fa-cloud-sun fa-icon"></i>Environmental Conditions</h2>
+                <p><i class="fa-solid fa-temperature-high fa-icon"></i>Temperature:<span id="temperature" class="data">0°C</span></p>
+                <p><i class="fa-solid fa-droplet fa-icon"></i>Soil Moisture: <span id="moisture" class="data">0%</span></p>
+            </div>
+        </div>
+        <div class="container">
+            <div class="card"><h2><i class="fa-solid fa-wheat-awn fa-icon"></i>Crop Details</h2>
+                <p><i class="fa-solid fa-seedling fa-icon"></i>Crop Type: <span id="crop">Maize</span></p>
+                <p><i class="fa-solid fa-clock fa-icon"></i>Time Elapsed: <span id="timeElapsed">0 days</span></p>
+            </div>
+            <div class="card"><h2><i class="fa-solid fa-info-circle fa-icon"></i>Ideal Conditions</h2>
+                <p><i class="fa-solid fa-seedling fa-icon"></i>Height: <span id="idealHeight">50-100 cm</span></p>
+                <p><i class="fa-solid fa-temperature-high fa-icon"></i>Temp: <span id="idealTemp">20-30°C</span></p>
+                <p><i class="fa-solid fa-droplet fa-icon"></i>Moisture: <span id="idealMoisture">50-70%</span></p>
+            </div>
+            <div class="card"><h2><i class="fa-solid fa-lightbulb fa-icon"></i>Recommendations</h2>
+                <div id="recommendations">
+                    <p><i class="fa-solid fa-exclamation-circle fa-icon"></i>Problem: <span id="problem">Loading...</span></p>
+                    <p><i class="fa-solid fa-tools fa-icon"></i>Recommendation: <span id="recommendation">Gathering data...</span></p>
+                </div>
+            </div>
+            <div class="card"><h2><i class="fa-solid fa-pen-to-square fa-icon"></i>Input Crop Information</h2>
+                <p><i class="fa-solid fa-seedling fa-icon"></i>
+                    <select id="cropSelect">
+                        <option value="Maize">Maize</option>
+                        <option value="Wheat">Wheat</option>
+                        <option value="Rice">Rice</option>
+                        <option value="Soybean">Soybean</option>
+                    </select>
+                </p>
+                <p><i class="fa-solid fa-calendar fa-icon"></i><input type="date" id="plantingDate"></p>
+                <button onclick="submitCrop()"><i class="fa-solid fa-upload fa-icon"></i>Submit</button>
+            </div>
+        </div>
+        <footer>
+            <div class="footer-content">
+                <h3>Developed by Muhire Jacques</h3>
+                <div class="footer-contact">
+                    <p>Email: <a href="mailto:muhirejacques71@gmail.com">muhirejacques71@gmail.com</a></p>
+                    <p>Tel: <a href="tel:+250787084167">+250 787 084 167</a></p>
+                </div>
+                <div class="footer-social">
+                    <a href="https://instagram.com/muhirejacques" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://facebook.com/muhirejacques" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://x.com/muhirejacques" target="_blank" title="X"><i class="fab fa-x-twitter"></i></a>
+                    <a href="https://linkedin.com/in/muhirejacques" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Agronomist Dashboard -->
+    <div id="agronomistDashboard">
+        <div class="container" id="agronomistContainer">
+            <!-- Profile form or advanced dashboard will be dynamically inserted here -->
+        </div>
+        <footer>
+            <div class="footer-content">
+                <h3>Developed by Muhire Jacques</h3>
+                <div class="footer-contact">
+                    <p>Email: <a href="mailto:muhirejacques71@gmail.com">muhirejacques71@gmail.com</a></p>
+                    <p>Tel: <a href="tel:+250787084167">+250 787 084 167</a></p>
+                </div>
+                <div class="footer-social">
+                    <a href="https://instagram.com/muhirejacques" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://facebook.com/muhirejacques" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://x.com/muhirejacques" target="_blank" title="X"><i class="fab fa-x-twitter"></i></a>
+                    <a href="https://linkedin.com/in/muhirejacques" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Agronomists List (for Monitoring Users) -->
+    <div id="agronomistsContent">
+        <div class="container" id="agronomistsContainer">
+            <!-- Agronomist cards will be dynamically inserted here -->
+        </div>
+        <footer>
+            <div class="footer-content">
+                <h3>Developed by Muhire Jacques</h3>
+                <div class="footer-contact">
+                    <p>Email: <a href="mailto:muhirejacques71@gmail.com">muhirejacques71@gmail.com</a></p>
+                    <p>Tel: <a href="tel:+250787084167">+250 787 084 167</a></p>
+                </div>
+                <div class="footer-social">
+                    <a href="https://instagram.com/muhirejacques" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://facebook.com/muhirejacques" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://x.com/muhirejacques" target="_blank" title="X"><i class="fab fa-x-twitter"></i></a>
+                    <a href="https://linkedin.com/in/muhirejacques" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
     <script>
+        let currentUser = null;
+
         function updateData() {
             fetch('/api/data')
                 .then(response => response.json())
@@ -66,26 +273,238 @@
                     document.getElementById('height').textContent = data.height + ' cm';
                     document.getElementById('temperature').textContent = data.temperature + '°C';
                     document.getElementById('moisture').textContent = data.moisture + '%';
-
-                    // Update recommendations dynamically
-                    const recDiv = document.getElementById('recommendations');
-                    if (data.height < 50) {
-                        recDiv.innerHTML = `
-                            <p style="color: #2e7d32;"><i class="fa-solid fa-droplet fa-icon"></i>Moisture: good status.<br>
-                            <i class="fa-solid fa-temperature-high fa-icon"></i>Temperature: good status.<br>
-                            <i class="fa-solid fa-seedling fa-icon"></i>Crop height: bad status.</p>
-                            <p style="color: red;"><i class="fa-solid fa-triangle-exclamation fa-icon"></i>Your crop height is not in good condition.</p>
-                            <p style="color: red;"><i class="fa-solid fa-bug fa-icon"></i>Please check for pests, rodents, or diseases.</p>
-                        `;
-                    } else {
-                        recDiv.innerHTML = `<p><i class="fa-solid fa-check-circle fa-icon"></i>Your crops are in good condition!<br>Keep updated</p>`;
-                    }
+                    document.getElementById('crop').textContent = data.crop;
+                    document.getElementById('timeElapsed').textContent = data.timeElapsed + ' days';
+                    document.getElementById('idealHeight').textContent = data.idealHeight;
+                    document.getElementById('idealTemp').textContent = data.idealTemp;
+                    document.getElementById('idealMoisture').textContent = data.idealMoisture;
+                    document.getElementById('problem').textContent = data.problem;
+                    document.getElementById('recommendation').textContent = data.recommendation;
                 })
                 .catch(error => console.log('Error:', error));
         }
 
-        setInterval(updateData, 1000);
-        updateData();
+        function submitCrop() {
+            const crop = document.getElementById('cropSelect').value;
+            const plantingDate = document.getElementById('plantingDate').value;
+            fetch('/api/set-crop', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ crop, plantingDate })
+            }).then(updateData);
+        }
+
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    document.getElementById('loginError').textContent = data.message;
+                } else {
+                    currentUser = { username: data.username, role: data.role, profile_complete: data.profile_complete };
+                    document.getElementById('loginRegisterContent').style.display = 'none';
+                    if (data.role === 'monitoring') {
+                        document.getElementById('monitoringDashboard').style.display = 'block';
+                        document.getElementById('agronomistsLink').style.display = 'block';
+                        setInterval(updateData, 1000);
+                        updateData();
+                    } else if (data.role === 'agronomist') {
+                        document.getElementById('agronomistDashboard').style.display = 'block';
+                        loadAgronomistDashboard();
+                    }
+                }
+            });
+        }
+
+        function register() {
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+            const role = document.getElementById('regRole').value;
+            fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password, role })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Registration successful') {
+                    showLogin();
+                } else {
+                    document.getElementById('regError').textContent = data.message;
+                }
+            });
+        }
+
+        function updateProfile() {
+            const formData = new FormData();
+            formData.append('username', currentUser.username);
+            formData.append('name', document.getElementById('agroName').value);
+            formData.append('email', document.getElementById('agroEmail').value);
+            formData.append('phone', document.getElementById('agroPhone').value);
+            formData.append('professional_job', document.getElementById('agroJob').value);
+            const photoFile = document.getElementById('agroPhoto').files[0];
+            const cvFile = document.getElementById('agroCV').files[0];
+            if (photoFile) formData.append('photo', photoFile);
+            if (cvFile) formData.append('cv', cvFile);
+
+            fetch('/api/update-profile', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Profile updated') {
+                    currentUser.profile_complete = true;
+                    loadAgronomistDashboard();
+                } else {
+                    document.getElementById('profileError').textContent = data.message;
+                }
+            })
+            .catch(error => console.log('Error updating profile:', error));
+        }
+
+        function loadAgronomistDashboard() {
+            const container = document.getElementById('agronomistContainer');
+            container.innerHTML = '';
+            if (!currentUser.profile_complete) {
+                container.innerHTML = `
+                    <div class="card agronomist-card">
+                        <h2><i class="fa-solid fa-user-tie fa-icon"></i>Build Your Profile</h2>
+                        <input type="text" id="agroName" placeholder="Full Name">
+                        <input type="email" id="agroEmail" placeholder="Email">
+                        <input type="tel" id="agroPhone" placeholder="Phone Number">
+                        <select id="agroJob">
+                            <option value="Agriculture Engineer">Agriculture Engineer</option>
+                            <option value="Soil Analyst">Soil Analyst</option>
+                            <option value="Irrigation Engineer">Irrigation Engineer</option>
+                            <option value="Crop Consultant">Crop Consultant</option>
+                            <option value="Plant Pathologist">Plant Pathologist</option>
+                        </select>
+                        <input type="file" id="agroPhoto" accept="image/*" placeholder="Profile Photo">
+                        <input type="file" id="agroCV" accept=".pdf" placeholder="CV">
+                        <button onclick="updateProfile()"><i class="fa-solid fa-save fa-icon"></i>Save Profile</button>
+                        <p class="error" id="profileError"></p>
+                    </div>
+                `;
+            } else {
+                fetch(`/api/profile?username=${currentUser.username}`)
+                    .then(response => response.json())
+                    .then(profile => {
+                        container.innerHTML = `
+                            <div class="agro-dashboard">
+                                <div class="agro-header">
+                                    ${profile.photo_path ? `<img src="/uploads/${profile.photo_path}" alt="Profile Photo">` : '<img src="https://via.placeholder.com/150" alt="No Photo">'}
+                                    <div class="agro-info">
+                                        <h1>${profile.name || 'Not provided'}</h1>
+                                        <p><i class="fa-solid fa-briefcase fa-icon"></i>${profile.professional_job || 'Not specified'}</p>
+                                        <p class="success">Registration successful! Your profile is now public and can be viewed by farmers.</p>
+                                    </div>
+                                </div>
+                                <div class="agro-details">
+                                    <div>
+                                        <h3><i class="fa-solid fa-envelope fa-icon"></i>Email</h3>
+                                        <p>${profile.email || 'Not provided'}</p>
+                                    </div>
+                                    <div>
+                                        <h3><i class="fa-solid fa-phone fa-icon"></i>Phone</h3>
+                                        <p>${profile.phone || 'Not provided'}</p>
+                                    </div>
+                                    <div>
+                                        <h3><i class="fa-solid fa-file-pdf fa-icon"></i>CV</h3>
+                                        ${profile.cv_path ? `<a href="/uploads/${profile.cv_path}" download><button><i class="fa-solid fa-download fa-icon"></i>Download CV</button></a>` : '<p>No CV uploaded</p>'}
+                                    </div>
+                                    <div>
+                                        <h3><i class="fa-solid fa-user fa-icon"></i>Username</h3>
+                                        <p>${currentUser.username}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+            }
+        }
+
+        function showRegister() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+        }
+
+        function showDashboard() {
+            if (currentUser.role === 'monitoring') {
+                document.getElementById('monitoringDashboard').style.display = 'block';
+                document.getElementById('agronomistsContent').style.display = 'none';
+                document.getElementById('agronomistDashboard').style.display = 'none';
+            } else {
+                document.getElementById('monitoringDashboard').style.display = 'none';
+                document.getElementById('agronomistsContent').style.display = 'none';
+                document.getElementById('agronomistDashboard').style.display = 'block';
+                loadAgronomistDashboard();
+            }
+            toggleMenu();
+        }
+
+        function showAgronomists() {
+            if (currentUser.role !== 'monitoring') return;
+            document.getElementById('monitoringDashboard').style.display = 'none';
+            document.getElementById('agronomistDashboard').style.display = 'none';
+            document.getElementById('agronomistsContent').style.display = 'block';
+            fetchAgronomists();
+            toggleMenu();
+        }
+
+        function fetchAgronomists() {
+            fetch('/api/agronomists')
+                .then(response => response.json())
+                .then(agronomists => {
+                    const container = document.getElementById('agronomistsContainer');
+                    container.innerHTML = '';
+                    if (agronomists.length === 0) {
+                        container.innerHTML = '<p>No agronomists registered yet.</p>';
+                        return;
+                    }
+                    agronomists.forEach(agro => {
+                        const card = document.createElement('div');
+                        card.className = 'card agronomist-card';
+                        card.innerHTML = `
+                            <h2><i class="fa-solid fa-user-tie fa-icon"></i>Agronomist</h2>
+                            ${agro.photo_path ? `<img src="/uploads/${agro.photo_path}" alt="Profile Photo">` : '<p>No photo uploaded</p>'}
+                            <p><i class="fa-solid fa-user fa-icon"></i>Name: ${agro.name || 'Not provided'}</p>
+                            <p><i class="fa-solid fa-briefcase fa-icon"></i>Job: ${agro.professional_job || 'Not specified'}</p>
+                            <p><i class="fa-solid fa-envelope fa-icon"></i>Email: ${agro.email || 'Not provided'}</p>
+                            <p><i class="fa-solid fa-phone fa-icon"></i>Phone: ${agro.phone || 'Not provided'}</p>
+                            ${agro.cv_path ? `<a href="/uploads/${agro.cv_path}" download><button><i class="fa-solid fa-download fa-icon"></i>Download CV</button></a>` : '<p>No CV uploaded</p>'}
+                        `;
+                        container.appendChild(card);
+                    });
+                })
+                .catch(error => console.log('Error fetching agronomists:', error));
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('monitoringDashboard').style.display = 'none';
+            document.getElementById('agronomistDashboard').style.display = 'none';
+            document.getElementById('agronomistsContent').style.display = 'none';
+            document.getElementById('agronomistsLink').style.display = 'none';
+            document.getElementById('loginRegisterContent').style.display = 'block';
+            toggleMenu();
+        }
+
+        function toggleMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+        }
     </script>
 </body>
 </html>
